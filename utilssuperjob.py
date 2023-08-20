@@ -69,8 +69,7 @@ class SuperJobJSONSaver(Saver):
             print(f'Место работы: {vacancy["town"]["title"]}')
             print(f'Зарплата: {vacancy["payment_from"]} - {vacancy["payment_to"]} {vacancy["currency"]}')
             print(f'Работодатель: {vacancy["client"]["title"]}')
-            print(f'Требования и обязанности: {vacancy["candidat"]}')
-            # print(f'Обязанности: {vacancy["snippet"]["responsibility"]}')
+            print(vacancy["candidat"])
             print(f'Ссылка на вакансию: {vacancy["link"]}')
             i += 1
 
