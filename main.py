@@ -1,16 +1,16 @@
 from utilsheadhunter import HeadHunterVacancy, HeadHunterJSONSaver
-from utilssuperjob import SuperJobVacancy
+from utilssuperjob import SuperJobVacancy, SuperJobJSONSaver
 
 
-def sort_vacancies(vac_filtered):
+def sort_vacancies(vac_filtered, key_sorted):
     """Сортирует отфильтрованные вакансии в порядке возрастания"""
-    vac_sorted = sorted(vac_filtered, key=lambda x: x['salary']['from'])
+    vac_sorted = sorted(vac_filtered, key=key_sorted)
     return vac_sorted
 
 
-def sort_vacancies_revers(vac_filtered):
+def sort_vacancies_revers(vac_filtered, key_sorted):
     """Сортирует отфильтрованные вакансии в порядке убывания"""
-    vac_sorted = sorted(vac_filtered, key=lambda x: x['salary']['from'], reverse=True)
+    vac_sorted = sorted(vac_filtered, key=key_sorted, reverse=True)
     return vac_sorted
 
 
@@ -57,21 +57,21 @@ def user_interaction():
     if platform == '0':
         vacancy = HeadHunterVacancy(keyword, salary, id_exp_hh, id_emp_hh)
         vacancies_filtered = vacancy.get_filtered()
-        print('='*30)
-        if len(vacancy) == 0:
+        print('='*31)
         print('По вашему запросу найдено вакансий:', len(vacancy))
-        sort_flag = input('Отсортировать найденные вакансии\n'
+        sort_flag = input('Отсортировать найденные вакансии по зарплате?\n'
                           '(0 - нет; 1 - да, в порядке убывания; 2 - да, в порядке возрастания): ')
         if sort_flag == '0':
             vacancies_save = HeadHunterJSONSaver(vacancies_filtered)
         elif sort_flag == '1':
-            vacancies_sorted = sort_vacancies_revers(vacancies_filtered)
+            vacancies_sorted = sort_vacancies_revers(vacancies_filtered, lambda x: x['salary']['from'])
             vacancies_save = HeadHunterJSONSaver(vacancies_sorted)
         else:
-            vacancies_sorted = sort_vacancies(vacancies_filtered)
+            vacancies_sorted = sort_vacancies(vacancies_filtered, lambda x: x['salary']['from'])
             vacancies_save = HeadHunterJSONSaver(vacancies_sorted)
         vacancies_save.add_vacancy()
         vacancies_save.get_vacancy()
+        print('=' * 31)
         while True:
             flag_del_vacancy = input('Удалить найденные вакансии?\n'
                                      '(0 - нет; 1 - да): ')
@@ -85,21 +85,27 @@ def user_interaction():
     elif platform == '1':
         vacancy = SuperJobVacancy(keyword, salary, id_exp_sj, id_emp_sj)
         vacancies_filtered = vacancy.get_filtered()
-        print('=' * 30)
-        if len(vacancy) == 0:
-            print('По вашему запросу найдено вакансий:', len(vacancy))
-        sort_flag = input('Отсортировать найденные вакансии\n'
-                          '(0 - нет; 1 - да, в порядке убывания; 2 - да, в порядке возрастания): ')
-        if sort_flag == '0':
-            vacancies_save = SuperJobJSONSaver(vacancies_filtered)
-        elif sort_flag == '1':
-            vacancies_sorted = sort_vacancies_revers(vacancies_filtered)
-            vacancies_save = SuperJobJSONSaver(vacancies_sorted)
-        else:
-            vacancies_sorted = sort_vacancies(vacancies_filtered)
-            vacancies_save = SuperJobJSONSaver(vacancies_sorted)
+        print('=' * 31)
+        print('По вашему запросу найдено вакансий:', len(vacancy))
+        while True:
+            sort_flag = input('Отсортировать найденные вакансии по зарплате?\n'
+                              '(0 - нет; 1 - да, в порядке убывания; 2 - да, в порядке возрастания): ')
+            if sort_flag == '0':
+                vacancies_save = SuperJobJSONSaver(vacancies_filtered)
+                break
+            elif sort_flag == '1':
+                vacancies_sorted = sort_vacancies_revers(vacancies_filtered, lambda x: x['payment_from'])
+                vacancies_save = SuperJobJSONSaver(vacancies_sorted)
+                break
+            elif sort_flag == '1':
+                vacancies_sorted = sort_vacancies(vacancies_filtered, lambda x: x['payment_from'])
+                vacancies_save = SuperJobJSONSaver(vacancies_sorted)
+                break
+            else:
+                print('Ошибка ввода!')
         vacancies_save.add_vacancy()
         vacancies_save.get_vacancy()
+        print('=' * 31)
         while True:
             flag_del_vacancy = input('Удалить найденные вакансии?\n'
                                      '(0 - нет; 1 - да): ')
